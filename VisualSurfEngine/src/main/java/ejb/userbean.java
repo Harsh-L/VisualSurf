@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +22,7 @@ import javax.persistence.PersistenceContext;
  *
  * @author harsh
  */
+@RolesAllowed("User")
 @Stateless
 public class userbean implements userbeanLocal {
 
@@ -51,10 +53,12 @@ public class userbean implements userbeanLocal {
     }
 
     @Override
-    public void deleteUser(int id) {
+    public void deleteUser(int id, Usertb user) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, id);
-        em.remove(user);
+        if(id == user.getUserID()){
+            Usertb user_data = em.find(Usertb.class, id);
+            em.remove(user_data);
+        }
     }
 
     @Override
@@ -69,6 +73,11 @@ public class userbean implements userbeanLocal {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         Usertb user = em.find(Usertb.class, id);
         return user;
+    }
+    
+    @Override
+    public List<Usertb> getAllUsers(){
+        return em.createNamedQuery("Usertb.findAll").getResultList();
     }
 
     @Override
@@ -104,7 +113,7 @@ public class userbean implements userbeanLocal {
         em.persist(board);
         em.merge(user);
     }
-
+    
     @Override
     public void updateBoardName(Integer userid, Integer boardid, String boardName) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -122,7 +131,28 @@ public class userbean implements userbeanLocal {
         }
         em.merge(board);
     }
-
+    
+    @Override
+    public List<Boardtb> getUserBoards(Integer userid){
+        Usertb user = em.find(Usertb.class, userid);
+        Collection<Boardtb> boards = user.getBoardtbCollection();
+        return (List<Boardtb>) boards;
+    }
+    
+    @Override
+    public Boardtb getBoard(Integer userid, Integer boardID){
+        Usertb user = em.find(Usertb.class, userid);
+        Collection<Boardtb> boards = user.getBoardtbCollection();
+        for(Boardtb board : boards){
+            if(board.getBoardid() == boardID){
+                return em.find(Boardtb.class, board.getBoardid());
+            }else{
+                return null;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public void setImageBoard(Integer userid, Integer imageID, Integer boardID) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -199,6 +229,7 @@ public class userbean implements userbeanLocal {
         Usertb user = em.find(Usertb.class, userid);
         Imagetb image = em.find(Imagetb.class, id);
         Collection<Imagetb> userImages =  user.getImagetbCollection();
+        userImages.remove(image);
         em.remove(image);
     }
     

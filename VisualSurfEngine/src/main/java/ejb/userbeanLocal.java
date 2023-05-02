@@ -4,6 +4,7 @@
  */
 package ejb;
 
+import entity.Boardtb;
 import entity.Categorytb;
 import entity.Imagetb;
 import entity.Usertb;
@@ -21,9 +22,10 @@ public interface userbeanLocal {
     // user operations
     public void insertUser(String username, String name, String email, String password, Integer role);
     public void updateUser(int id, String username, String name, String email);
-    public void deleteUser(int id);
+    public void deleteUser(int id, Usertb user);
     public List<Usertb> searchUserByName(String username);
     public Usertb searchUserById(int id);
+    public List<Usertb> getAllUsers();
     
     // category operations
     public void setFavouriteCategory(Integer userid, List<Integer> categoryID);
@@ -32,6 +34,8 @@ public interface userbeanLocal {
     // board operations
     public void createBoard(Integer userid, String boardName);
     public void updateBoardName(Integer userid,Integer boardid ,String boardName);
+    public List<Boardtb> getUserBoards(Integer userid);
+    public Boardtb getBoard(Integer userid, Integer boardID);
     public void setImageBoard(Integer userid, Integer imageID, Integer boardID);
     
     // image operations
