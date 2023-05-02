@@ -48,4 +48,7 @@ public interface userbeanLocal {
     
     // follow operations
     public void followUser(Integer follower, Integer follow);
+    
+    // login
+    public boolean login(String username, String password);
 }

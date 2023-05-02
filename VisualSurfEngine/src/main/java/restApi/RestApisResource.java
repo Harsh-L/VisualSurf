@@ -157,6 +157,14 @@ public class RestApisResource {
         user.uploadImage(userid, title, description, imageUrl, tags_collection);
     }
     
+    
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/login")
+    public boolean login(@FormParam("username") String username, @FormParam("password") String password){
+        return user.login(username, password);
+    }
+    
     // PUT METHODS
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)

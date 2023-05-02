@@ -19,9 +19,12 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
-import restApi.NewJerseyClient;
+import restClient.RESTClient;
 
 /**
  *
@@ -42,9 +45,10 @@ public class bean implements Serializable {
     Collection<Usertb> users;
     GenericType<Collection<Usertb>> gen_users;
     Usertb userData;
+    GenericType<Usertb> gen_userData;
     Boardtb boardData;
     Imagetb imageData;
-    NewJerseyClient client;
+    RESTClient client;
     Response res;
     
     
@@ -60,7 +64,9 @@ public class bean implements Serializable {
         roles = new ArrayList<>();
         users = new ArrayList<>();
         gen_users = new GenericType<Collection<Usertb>>(){};
-        client = new NewJerseyClient();
+        client = new RESTClient();
+        userData = new Usertb();
+        gen_userData = new GenericType<Usertb>(){};
     }
 
     public Collection<Usertb> getAllUsers(){
@@ -75,16 +81,23 @@ public class bean implements Serializable {
         }    
     }
     
-    public Usertb getUserData(int userid) {
-        return user.searchUserById(userid);
+    public Usertb getUserData() {
+        return userData;
     }
-
     public void setUserData(Usertb userData) {
-        String password = userData.getPassword();
-        // encrypt password
-        Roletb role = userData.getRoleID();
-        user.insertUser(userData.getUsername(), userData.getName(), userData.getEmail(), password, role.getRoleID());
+        this.userData = userData;
     }
+    
+//    public Usertb getUserData(int userid) {
+//        return user.searchUserById(userid);
+//    }
+//    public void setUserData(Usertb userData) {
+////        String password = userData.getPassword();
+////        // encrypt password
+////        Roletb role = userData.getRoleID();
+////        user.insertUser(userData.getUsername(), userData.getName(), userData.getEmail(), password, role.getRoleID());
+//    }
+    
 
     public Boardtb getBoardData(Integer userid, Integer boardId) {
         return user.getBoard(userid, boardId);
@@ -102,7 +115,32 @@ public class bean implements Serializable {
         this.imageData = imageData;
     }
     
+    public String login(){
+        Form form = new Form();
+        form.param("username", userData.getUsername());
+        form.param("password", userData.getPassword());
+        res = client.login(userData , Response.class);
+        userData = res.readEntity(gen_userData);
+        HttpServletRequest req = null;
+        if(userData != null){
+            HttpSession session = req.getSession(true);
+            session.setAttribute("username", userData.getUsername());
+            session.setAttribute("userid", userData.getUserID());
+            session.setAttribute("role", userData.getRoleID().getRoleName());
+            return "home.jsf";
+        }else{
+            return "login.jsf";
+        }
+    }
     
-    
+    public String logout(){
+        HttpServletRequest req = null;
+        HttpSession session = req.getSession(true);
+        session.setAttribute("username", "");
+        session.setAttribute("userid", "");
+        session.setAttribute("role", "");
+        session.invalidate();
+        return "login.jsf";
+    }
     
 }

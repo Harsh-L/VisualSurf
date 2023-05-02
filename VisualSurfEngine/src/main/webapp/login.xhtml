@@ -1,12 +1,43 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
     <h:head>
         <title>Facelet Title</title>
+        <style>
+            .body [inpuText]{
+                place-self: username
+            }
+        </style>
     </h:head>
+
     <h:body>
-        Hello from Facelets
+<!--        <h:form>
+            <input type="text"  id="username"  />
+            <h:inputText title="username" id="username" />
+            <p:inputText type="text" id="username" value="#{bean.userData.username}" placeholder="Username"/>
+            <p:inputText type="password" id="password" placeholder="password" required="true" />  
+            <p:password id="password" required="true" value="#{bean}" placeholder="Password"/>
+            <p:button onclick="" value="login" />
+        </h:form>-->
+
+<f:view>
+
+
+    <h:form>
+        <h1><h:outputText value="Create/Edit"/></h1>
+        <h:panelGrid columns="2">
+            <p:inputText id="username" value="#{bean.userData.username}" placeholder="Username"  requiredMessage="The Username field is required."/>
+            <p:inputText id="password" value="#{bean.userData.password}" placeholder="Password" requiredMessage="The Password field is required."/>
+            <!--<p:commandButton value="Login" action="#{bean.login()}" process="@this"/>-->
+            <h:commandButton value="Login" action="#{bean.login}" />
+        </h:panelGrid>
+    </h:form>
+</f:view>
+
     </h:body>
 </html>
 

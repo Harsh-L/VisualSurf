@@ -17,6 +17,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -266,6 +267,19 @@ public class userbean implements userbeanLocal {
         Collection<Usertb> followee = user.getUsertbCollection();
         followee.add(user_follower);
         em.merge(user);
+    }
+    
+    @Override
+    public boolean login(String username, String password){
+        try{
+            Query user_query = em.createQuery("SELECT u FROM Usertb u WHERE u.username = :username AND u.password = :password").
+                    setParameter("username", username).setParameter("password", password);
+            Usertb user = (Usertb) user_query.getResultList().get(0);
+            
+            return user != null;
+        }catch(Exception e){
+            return false;
+        }
     }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
