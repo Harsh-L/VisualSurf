@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import restClient.RESTClient;
 
@@ -34,9 +36,11 @@ import restClient.RESTClient;
 @SessionScoped
 public class bean implements Serializable {
 
-    @EJB adminbeanLocal admin;
-    @EJB userbeanLocal user;
-    
+    @EJB
+    adminbeanLocal admin;
+    @EJB
+    userbeanLocal user;
+
     Collection<Accounttypetb> accTypes;
     Collection<Boardtb> boards;
     Collection<Categorytb> categories;
@@ -50,9 +54,7 @@ public class bean implements Serializable {
     Imagetb imageData;
     RESTClient client;
     Response res;
-    
-    
-    
+
     /**
      * Creates a new instance of bean
      */
@@ -63,31 +65,34 @@ public class bean implements Serializable {
         images = new ArrayList<>();
         roles = new ArrayList<>();
         users = new ArrayList<>();
-        gen_users = new GenericType<Collection<Usertb>>(){};
+        gen_users = new GenericType<Collection<Usertb>>() {
+        };
         client = new RESTClient();
         userData = new Usertb();
-        gen_userData = new GenericType<Usertb>(){};
+        gen_userData = new GenericType<Usertb>() {
+        };
     }
 
-    public Collection<Usertb> getAllUsers(){
+    public Collection<Usertb> getAllUsers() {
         res = client.getTest(Response.class);
         Collection<Usertb> tempUsers = new ArrayList<>();
-        if(res == Response.noContent().build()){
+        if (res == Response.noContent().build()) {
             return null;
-        }else if(res == Response.ok( tempUsers).build() ){
+        } else if (res == Response.ok(tempUsers).build()) {
             return res.readEntity(gen_users);
-        }else{
+        } else {
             return null;
-        }    
+        }
     }
-    
+
     public Usertb getUserData() {
         return userData;
     }
+
     public void setUserData(Usertb userData) {
         this.userData = userData;
     }
-    
+
 //    public Usertb getUserData(int userid) {
 //        return user.searchUserById(userid);
 //    }
@@ -97,8 +102,6 @@ public class bean implements Serializable {
 ////        Roletb role = userData.getRoleID();
 ////        user.insertUser(userData.getUsername(), userData.getName(), userData.getEmail(), password, role.getRoleID());
 //    }
-    
-
     public Boardtb getBoardData(Integer userid, Integer boardId) {
         return user.getBoard(userid, boardId);
     }
@@ -114,26 +117,48 @@ public class bean implements Serializable {
     public void setImageData(Imagetb imageData) {
         this.imageData = imageData;
     }
-    
-    public String login(){
+
+    public String login() {
         Form form = new Form();
         form.param("username", userData.getUsername());
         form.param("password", userData.getPassword());
-        res = client.login(userData , Response.class);
-        userData = res.readEntity(gen_userData);
-        HttpServletRequest req = null;
-        if(userData != null){
-            HttpSession session = req.getSession(true);
-            session.setAttribute("username", userData.getUsername());
-            session.setAttribute("userid", userData.getUserID());
-            session.setAttribute("role", userData.getRoleID().getRoleName());
-            return "home.jsf";
-        }else{
+        res = client.login(userData);
+//        userData = res.readEntity(gen_userData);
+        System.err.println(res.getEntity());
+//        if (userData == null) {
+        if(res == Response.ok().build()){
+//            HttpServletRequest req;
+//            HttpServletResponse response;
+//
+//            response.addHeader("username", userData.getUsername());
+//            response.addHeader("password", userData.getPassword());
+//            HttpSession session = req.getSession(true);
+//            session.setAttribute("username", userData.getUsername());
+//            session.setAttribute("userid", userData.getUserID());
+//            session.setAttribute("role", userData.getRoleID().getRoleName());
+            return "test.jsf";
+        } else {
             return "login.jsf";
         }
+
+//        HttpServletRequest req = null;
+//        HttpServletResponse response = null;
+//        
+//        response.addHeader("username", userData.getUsername());
+//        response.addHeader("password", userData.getPassword());
+//        
+//        if(userData != null){
+//            HttpSession session = req.getSession(true);
+//            session.setAttribute("username", userData.getUsername());
+//            session.setAttribute("userid", userData.getUserID());
+//            session.setAttribute("role", userData.getRoleID().getRoleName());
+//            return "home.jsf";
+//        }else{
+//            return "login.jsf";
+//        }
     }
-    
-    public String logout(){
+
+    public String logout() {
         HttpServletRequest req = null;
         HttpSession session = req.getSession(true);
         session.setAttribute("username", "");
@@ -142,5 +167,5 @@ public class bean implements Serializable {
         session.invalidate();
         return "login.jsf";
     }
-    
+
 }

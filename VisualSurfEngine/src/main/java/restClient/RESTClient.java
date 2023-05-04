@@ -7,6 +7,7 @@ package restClient;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 /**
  * Jersey REST client generated for REST resource:RestApisResource
@@ -76,8 +77,8 @@ public class RESTClient {
         webTarget.path("upload").request().post(null);
     }
 
-    public <T> T login(Object requestEntity, Class<T> responseType) throws ClientErrorException {
-        return webTarget.path("login").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), responseType);
+    public Response login(Object requestEntity) throws ClientErrorException {
+        return webTarget.path("login").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
     }
 
     public <T> T getTest(Class<T> responseType) throws ClientErrorException {

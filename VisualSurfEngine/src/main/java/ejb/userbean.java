@@ -270,15 +270,17 @@ public class userbean implements userbeanLocal {
     }
     
     @Override
-    public boolean login(String username, String password){
+    public Usertb login(String username, String password){
         try{
             Query user_query = em.createQuery("SELECT u FROM Usertb u WHERE u.username = :username AND u.password = :password").
                     setParameter("username", username).setParameter("password", password);
             Usertb user = (Usertb) user_query.getResultList().get(0);
-            
-            return user != null;
+            if(user != null)
+                return user;
+            else
+                return null;
         }catch(Exception e){
-            return false;
+            return null;
         }
     }
     // Add business logic below. (Right-click in editor and choose

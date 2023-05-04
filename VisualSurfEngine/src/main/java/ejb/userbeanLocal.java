@@ -50,5 +50,5 @@ public interface userbeanLocal {
     public void followUser(Integer follower, Integer follow);
     
     // login
-    public boolean login(String username, String password);
+    public Usertb login(String username, String password);
 }
