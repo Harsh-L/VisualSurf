@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 05, 2023 at 10:52 AM
+-- Generation Time: May 04, 2023 at 06:59 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -40,7 +40,8 @@ CREATE TABLE `accounttypetb` (
 
 CREATE TABLE `boardtb` (
   `boardid` int(11) NOT NULL,
-  `boardName` varchar(30) DEFAULT NULL
+  `boardName` varchar(30) DEFAULT NULL,
+  `userID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -96,6 +97,17 @@ CREATE TABLE `imagetb` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `like_tb`
+--
+
+CREATE TABLE `like_tb` (
+  `userID` int(11) NOT NULL,
+  `imageID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `roletb`
 --
 
@@ -116,18 +128,8 @@ CREATE TABLE `usertb` (
   `name` varchar(30) NOT NULL,
   `email` varchar(35) DEFAULT NULL,
   `password` varchar(1024) NOT NULL,
-  `accountID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_boardtb`
---
-
-CREATE TABLE `user_boardtb` (
-  `userID` int(11) DEFAULT NULL,
-  `boardID` int(11) DEFAULT NULL
+  `accountID` int(11) DEFAULT NULL,
+  `roleID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -139,17 +141,6 @@ CREATE TABLE `user_boardtb` (
 CREATE TABLE `user_cattb` (
   `userID` int(11) DEFAULT NULL,
   `catID` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_roletb`
---
-
-CREATE TABLE `user_roletb` (
-  `userID` int(11) NOT NULL,
-  `roleID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -166,7 +157,8 @@ ALTER TABLE `accounttypetb`
 -- Indexes for table `boardtb`
 --
 ALTER TABLE `boardtb`
-  ADD PRIMARY KEY (`boardid`);
+  ADD PRIMARY KEY (`boardid`),
+  ADD KEY `userID` (`userID`);
 
 --
 -- Indexes for table `board_imagetb`
@@ -196,6 +188,13 @@ ALTER TABLE `imagetb`
   ADD KEY `userID` (`userID`);
 
 --
+-- Indexes for table `like_tb`
+--
+ALTER TABLE `like_tb`
+  ADD KEY `userID` (`userID`),
+  ADD KEY `imageID` (`imageID`);
+
+--
 -- Indexes for table `roletb`
 --
 ALTER TABLE `roletb`
@@ -207,14 +206,8 @@ ALTER TABLE `roletb`
 ALTER TABLE `usertb`
   ADD PRIMARY KEY (`UserID`),
   ADD UNIQUE KEY `unique_username` (`username`),
-  ADD KEY `accountID` (`accountID`);
-
---
--- Indexes for table `user_boardtb`
---
-ALTER TABLE `user_boardtb`
-  ADD KEY `userID` (`userID`),
-  ADD KEY `boardID` (`boardID`);
+  ADD KEY `accountID` (`accountID`),
+  ADD KEY `roleID` (`roleID`);
 
 --
 -- Indexes for table `user_cattb`
@@ -222,13 +215,6 @@ ALTER TABLE `user_boardtb`
 ALTER TABLE `user_cattb`
   ADD KEY `userID` (`userID`),
   ADD KEY `catID` (`catID`);
-
---
--- Indexes for table `user_roletb`
---
-ALTER TABLE `user_roletb`
-  ADD KEY `roleID` (`roleID`),
-  ADD KEY `userID` (`userID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -275,6 +261,12 @@ ALTER TABLE `usertb`
 --
 
 --
+-- Constraints for table `boardtb`
+--
+ALTER TABLE `boardtb`
+  ADD CONSTRAINT `boardtb_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `usertb` (`UserID`);
+
+--
 -- Constraints for table `board_imagetb`
 --
 ALTER TABLE `board_imagetb`
@@ -295,17 +287,18 @@ ALTER TABLE `imagetb`
   ADD CONSTRAINT `imagetb_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `usertb` (`UserID`);
 
 --
+-- Constraints for table `like_tb`
+--
+ALTER TABLE `like_tb`
+  ADD CONSTRAINT `like_tb_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `usertb` (`UserID`),
+  ADD CONSTRAINT `like_tb_ibfk_2` FOREIGN KEY (`imageID`) REFERENCES `imagetb` (`imageID`);
+
+--
 -- Constraints for table `usertb`
 --
 ALTER TABLE `usertb`
-  ADD CONSTRAINT `usertb_ibfk_1` FOREIGN KEY (`accountID`) REFERENCES `accounttypetb` (`accID`);
-
---
--- Constraints for table `user_boardtb`
---
-ALTER TABLE `user_boardtb`
-  ADD CONSTRAINT `user_boardtb_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `usertb` (`UserID`),
-  ADD CONSTRAINT `user_boardtb_ibfk_2` FOREIGN KEY (`boardID`) REFERENCES `boardtb` (`boardid`);
+  ADD CONSTRAINT `usertb_ibfk_1` FOREIGN KEY (`accountID`) REFERENCES `accounttypetb` (`accID`),
+  ADD CONSTRAINT `usertb_ibfk_2` FOREIGN KEY (`roleID`) REFERENCES `roletb` (`roleID`);
 
 --
 -- Constraints for table `user_cattb`
@@ -313,13 +306,6 @@ ALTER TABLE `user_boardtb`
 ALTER TABLE `user_cattb`
   ADD CONSTRAINT `user_cattb_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `usertb` (`UserID`),
   ADD CONSTRAINT `user_cattb_ibfk_2` FOREIGN KEY (`catID`) REFERENCES `categorytb` (`catID`);
-
---
--- Constraints for table `user_roletb`
---
-ALTER TABLE `user_roletb`
-  ADD CONSTRAINT `user_roletb_ibfk_1` FOREIGN KEY (`roleID`) REFERENCES `roletb` (`roleID`),
-  ADD CONSTRAINT `user_roletb_ibfk_2` FOREIGN KEY (`userID`) REFERENCES `usertb` (`UserID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

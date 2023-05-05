@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    </h:head>
+    <h:body>
+        <style>
+
+            body{
+                background-image: url('https://i.pinimg.com/originals/dc/bf/ba/dcbfba8ae83b0d788b7908964e4ef900.jpg');
+                height: auto;
+                width: inherit;
+            }
+            form{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-bottom: 60%;
+                transform: translate(-50%,-50%);
+                width: 400px;/*
+                height: 400px;*/
+                border: 2px whitesmoke;
+                padding: 10px;
+                background-color: whitesmoke;
+                border-radius: 20px;
+                border-style: solid;
+                text-align: center;
+                font-style: oblique;
+                background-color: rgba(255, 255, 255, 0.6)
+
+
+            }
+            .loginDiv{
+                padding-left: 100px;
+                padding-right: 20px;
+                color: olivedrab;
+
+            }
+            .formDiv{
+                margin-top: 15px;
+                align-self: center;
+                text-decoration: black;
+                background-attachment: scroll;
+                width: 200px;
+                height: 50px;
+                padding: 10px;
+
+            }
+
+            .inputdiv{
+                font-size: 130%;
+            }
+
+            .registerbutton{
+                background-color: burlywood;
+                border-radius: 8px;
+                border-color: #eee;
+                height: 35px;
+                width:100px;
+            }
+
+            button.registerbutton{
+                background-color: burlywood;
+                border-radius: 8px;
+                border-color: #eee;
+                height: 30px;
+                width:100px;
+            }
+
+            footer{
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                height: 40px;
+                padding: 1px;
+            }
+
+            /*            header {
+              
+              box-shadow: none;
+              transition: box-shadow 0.3s ease-in-out;
+            }
+                        header:hover {
+              box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.3);
+            }*/
+
+        </style>
+
+        <!-- Navbar (sit on top) -->
+        <div class="w3-top">
+            <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+                <a href="home.jsf" class="w3-bar-item w3-button"><b>VSE</b></a>
+                <!-- Float links to the right. Hide them on small screens -->
+                <div class="w3-right w3-hide-small">
+                    <a href="#surfs" class="w3-bar-item w3-button">Surfs</a>
+                    <a href="#about" class="w3-bar-item w3-button">About</a>
+                    <a href="#contact" class="w3-bar-item w3-button">Contact</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+
+
+        </header>
+
+
+        <div class="formDiv">
+            <h:form style="align-content:  center;">
+
+                <div class="inputdiv">
+
+
+                    <h3 class="signIn" style="color: #4f250e; font-family: sans-serif; font-weight: bold; font-size: 35px;" >Register</h3>       
+
+                    <p:inputText style="width: 60%;" type="text" id="username" placeholder="Username" value="${bean.userData.username}" required="true" requiredMessage="Enter username"/> 
+                    <p:message for="username" /><br/>  <br/>  
+                    <p:inputText style="width: 60%;" type="text" id="name" placeholder="Name" value="${bean.userData.name}" required="true" requiredMessage="Enter name"/> 
+                    <p:message for="name" /><br/> <br/>
+
+
+                    <p:inputText style="width: 60%;" type="text" id="email" placeholder="Email" value="${bean.userData.email}" required="true" requiredMessage="Enter email"/> 
+                    <p:message for="email" /><br/><br/>
+                    <p:password style="width: 60%;" id="password" placeholder="Password" value="${bean.userData.password}" required="true" requiredMessage="Enter password" />
+                    <p:message for="password" /><br/>
+                </div>
+                <div>
+                    <p:selectBooleanCheckbox id="isAdmin" style="margin-top: 13px;" value="${bean.isAdmin}" itemLabel="Register as admin" />
+                </div>
+
+                <div class="registerDiv" style=" margin-top: 10px; margin-left: 20px; margin-right: 20px; padding: 10px 20px">
+                    <h:commandButton id="registerButton" value="Register" action="${bean.registerUser}" styleClass="registerbutton" style="width: 45%;" />
+                    <br/><br/>
+                </div>
+                <!--            <div class="signInWithDiv">
+                                   
+                            <h2 class="lead fw-normal mb-0 me-3">Sign in with</h2>
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                              <i class="fab fa-facebook-f">f</i>
+                            </button>
+                
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                              <i class="fab fa-twitter">i</i>
+                            </button>
+                
+                            <button type="button" class="btn btn-primary btn-floating mx-1">
+                              <i class="fab fa-linkedin-in">in</i>
+                            </button>
+                          </div>-->
+            </h:form>
+        </div>
+
+
+
+
+        <!-- Footer -->
+
+<!--        <footer class="w3-center w3-white ">
+            <p align="center">Powered by @Surfs</p>
+        </footer>-->
+    </h:body>
+</html>
+

@@ -19,6 +19,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,19 +42,39 @@ public class bean implements Serializable {
     @EJB
     userbeanLocal user;
 
-    Collection<Accounttypetb> accTypes;
-    Collection<Boardtb> boards;
-    Collection<Categorytb> categories;
-    Collection<Imagetb> images;
-    Collection<Roletb> roles;
-    Collection<Usertb> users;
-    GenericType<Collection<Usertb>> gen_users;
-    Usertb userData;
-    GenericType<Usertb> gen_userData;
-    Boardtb boardData;
-    Imagetb imageData;
+    @Inject
+    private HttpServletRequest request;
+
+    Collection<Accounttypetb> accTypes; // DONE
+    GenericType<Collection<Accounttypetb>> gen_accTypes; // done
+
+    Collection<Boardtb> boards; // done
+    GenericType<Collection<Boardtb>> gen_boards; // done
+
+    Collection<Categorytb> categories; // done
+    GenericType<Collection<Categorytb>> gen_categories; //done
+
+    Collection<Imagetb> images; // done
+    GenericType<Collection<Imagetb>> gen_images; // done
+
+    Collection<Roletb> roles; // done
+    GenericType<Collection<Roletb>> gen_roles; // done
+
+    Collection<Usertb> users; // done
+    GenericType<Collection<Usertb>> gen_users; //done
+
+    Boardtb boardData; // done
+    GenericType<Boardtb> gen_boardData; // done
+
+    Imagetb imageData; // done
+    GenericType<Imagetb> gen_imageData; // done
+
+    Usertb userData; //done
+    GenericType<Usertb> gen_userData; // done
+
     RESTClient client;
     Response res;
+    boolean isAdmin = false;
 
     /**
      * Creates a new instance of bean
@@ -65,16 +86,40 @@ public class bean implements Serializable {
         images = new ArrayList<>();
         roles = new ArrayList<>();
         users = new ArrayList<>();
+        gen_accTypes = new GenericType<Collection<Accounttypetb>>() {
+        };
+        gen_boards = new GenericType<Collection<Boardtb>>() {
+        };
+        gen_categories = new GenericType<Collection<Categorytb>>() {
+        };
+        gen_images = new GenericType<Collection<Imagetb>>() {
+        };
+        gen_roles = new GenericType<Collection<Roletb>>() {
+        };
         gen_users = new GenericType<Collection<Usertb>>() {
         };
         client = new RESTClient();
+        boardData = new Boardtb();
+        gen_boardData = new GenericType<Boardtb>() {
+        };
+        imageData = new Imagetb();
+        gen_imageData = new GenericType<Imagetb>() {
+        };
         userData = new Usertb();
         gen_userData = new GenericType<Usertb>() {
         };
     }
 
+    public boolean isIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
     public Collection<Usertb> getAllUsers() {
-        res = client.getTest(Response.class);
+        res = client.getAllUsers(Response.class);
         Collection<Usertb> tempUsers = new ArrayList<>();
         if (res == Response.noContent().build()) {
             return null;
@@ -119,53 +164,82 @@ public class bean implements Serializable {
     }
 
     public String login() {
-        Form form = new Form();
-        form.param("username", userData.getUsername());
-        form.param("password", userData.getPassword());
         res = client.login(userData);
-//        userData = res.readEntity(gen_userData);
-        System.err.println(res.getEntity());
-//        if (userData == null) {
-        if(res == Response.ok().build()){
-//            HttpServletRequest req;
-//            HttpServletResponse response;
-//
-//            response.addHeader("username", userData.getUsername());
-//            response.addHeader("password", userData.getPassword());
-//            HttpSession session = req.getSession(true);
-//            session.setAttribute("username", userData.getUsername());
-//            session.setAttribute("userid", userData.getUserID());
-//            session.setAttribute("role", userData.getRoleID().getRoleName());
-            return "test.jsf";
+        if (res == Response.ok().build()) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("username", userData.getUsername());
+            session.setAttribute("userid", userData.getUserID());
+            session.setAttribute("role", userData.getRoleID().getRoleName());
+            return "home.jsf";
         } else {
             return "login.jsf";
         }
-
-//        HttpServletRequest req = null;
-//        HttpServletResponse response = null;
-//        
-//        response.addHeader("username", userData.getUsername());
-//        response.addHeader("password", userData.getPassword());
-//        
-//        if(userData != null){
-//            HttpSession session = req.getSession(true);
-//            session.setAttribute("username", userData.getUsername());
-//            session.setAttribute("userid", userData.getUserID());
-//            session.setAttribute("role", userData.getRoleID().getRoleName());
-//            return "home.jsf";
-//        }else{
-//            return "login.jsf";
-//        }
     }
 
     public String logout() {
-        HttpServletRequest req = null;
-        HttpSession session = req.getSession(true);
+        HttpSession session = request.getSession(true);
         session.setAttribute("username", "");
         session.setAttribute("userid", "");
         session.setAttribute("role", "");
         session.invalidate();
         return "login.jsf";
+    }
+
+    public String registerUser() {
+        Roletb role_data = admin.getUserRoleid();
+        userData.setRoleID(role_data);
+        res = client.insertUser(userData);
+        if (res == Response.ok().build()) {
+            return "login.jsf";
+        } else {
+            return "User_pages/register.jsf";
+        }
+    }
+
+    public String registerAdmin() {
+        if (isAdmin) {
+            Roletb role_data = admin.getAdminRoleid();
+            userData.setRoleID(role_data);
+        } else {
+            Roletb role_data = admin.getUserRoleid();
+            userData.setRoleID(role_data);
+        }
+        res = client.insertUser(userData);
+        if (res == Response.ok().build()) {
+            return "Admin_Pages/registerAdmin.jsf";
+        } else {
+            return "Admin_Pages/registerAdmin.jsf";
+        }
+    }
+
+    public Collection<Usertb> findByUsername() {
+        res = client.findUserByName(Response.class, userData.getName());
+        if (res == Response.ok().build()) {
+            Collection<Usertb> users = res.readEntity(gen_users);
+            return users;
+        } else {
+            return null;
+        }
+    }
+
+    public Collection<Usertb> findByID() {
+        res = client.findUserByID(Response.class, userData.getUserID().toString());
+        if (res == Response.ok().build()) {
+            Collection<Usertb> users = res.readEntity(gen_users);
+            return users;
+        } else {
+            return null;
+        }
+    }
+
+    public Collection<Boardtb> findUserBoards() {
+        res = client.findUserBoards(Response.class, userData.getUserID().toString());
+        if (res == Response.ok().build()) {
+            Collection<Boardtb> boards = res.readEntity(gen_boards);
+            return boards;
+        } else {
+            return null;
+        }
     }
 
 }

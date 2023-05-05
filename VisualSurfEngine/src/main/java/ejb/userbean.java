@@ -31,180 +31,226 @@ public class userbean implements userbeanLocal {
     EntityManager em;
 
     @Override
-    public void insertUser(String username, String name, String email, String password, Integer roleID) {
+    public boolean insertUser(String username, String name, String email, String password, Integer roleID) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = new Usertb();
-        user.setUsername(username);
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(password);
-        List<Roletb> role = em.createNamedQuery("Roletb.findByRoleID").setParameter("roleID", roleID).getResultList();
-        user.setRoleID(role.get(0));
-        em.persist(user);
+        try {
+            Usertb user = new Usertb();
+            user.setUsername(username);
+            user.setName(name);
+            user.setEmail(email);
+            user.setPassword(password);
+            List<Roletb> role = em.createNamedQuery("Roletb.findByRoleID").setParameter("roleID", roleID).getResultList();
+            user.setRoleID(role.get(0));
+            em.persist(user);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
-    public void updateUser(int id, String username, String name, String email) {
+    public boolean updateUser(int id, String username, String name, String email) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, id);
-        user.setUsername(username);
-        user.setName(name);
-        user.setEmail(email);
-        em.merge(user);
+        try {
+            Usertb user = em.find(Usertb.class, id);
+            user.setUsername(username);
+            user.setName(name);
+            user.setEmail(email);
+            em.merge(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
-    public void deleteUser(int id, Usertb user) {
+    public boolean deleteUser(int id, Usertb user) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        if(id == user.getUserID()){
-            Usertb user_data = em.find(Usertb.class, id);
-            em.remove(user_data);
+        try {
+            if (id == user.getUserID()) {
+                Usertb user_data = em.find(Usertb.class, id);
+                em.remove(user_data);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
         }
     }
 
     @Override
     public List<Usertb> searchUserByName(String username) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        List<Usertb> users = em.createNamedQuery("Usertb.findByUsername").setParameter("username", username).getResultList();
-        return users;
+        try {
+            List<Usertb> users = em.createNamedQuery("Usertb.findByUsername").setParameter("username", username).getResultList();
+            return users;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public Usertb searchUserById(int id) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, id);
-        return user;
-    }
-    
-    @Override
-    public List<Usertb> getAllUsers(){
-        return em.createNamedQuery("Usertb.findAll").getResultList();
+        try {
+            Usertb user = em.find(Usertb.class, id);
+            return user;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
-    public void setFavouriteCategory(Integer userid, List<Integer> category) {
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Collection<Categorytb> categories = new ArrayList<>();
-        for (int index = 0; index < category.size(); index++) {
-            Categorytb cat = em.find(Categorytb.class, category.get(index));
-            categories.add(cat);
+    public List<Usertb> getAllUsers() {
+        try {
+            return em.createNamedQuery("Usertb.findAll").getResultList();
+        } catch (Exception e) {
+            return null;
         }
-        Usertb user = em.find(Usertb.class, userid);
-        user.setCategorytbCollection(categories);
-        em.merge(user);
+    }
+
+    @Override
+    public boolean setFavouriteCategory(Integer userid, List<Integer> category) {
+        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            Collection<Categorytb> categories = new ArrayList<>();
+            for (int index = 0; index < category.size(); index++) {
+                Categorytb cat = em.find(Categorytb.class, category.get(index));
+                categories.add(cat);
+            }
+            Usertb user = em.find(Usertb.class, userid);
+            user.setCategorytbCollection(categories);
+            em.merge(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public Collection<Categorytb> getFavouriteCategory(Integer userid) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        return user.getCategorytbCollection();
-    }
-
-    @Override
-    public void createBoard(Integer userid, String boardName) {
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        Boardtb board = new Boardtb();
-        board.setBoardName(boardName);
-        board.setUserID(user);
-        Collection<Boardtb> boards = new ArrayList<Boardtb>();
-        boards.add(board);
-        user.setBoardtbCollection(boards);
-        em.persist(board);
-        em.merge(user);
-    }
-    
-    @Override
-    public void updateBoardName(Integer userid, Integer boardid, String boardName) {
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        Boardtb board = em.find(Boardtb.class, boardid);
-        board.setBoardName(boardName);
-        Collection<Boardtb> boards = user.getBoardtbCollection();
-        // TODO
-        Collection<Boardtb> new_boards = new ArrayList<>();
-        for (Boardtb b : boards) {
-            if (b.getBoardid() == boardid) {
-                b.setBoardName(boardName);
-            }
-            new_boards.add(b);
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            return user.getCategorytbCollection();
+        } catch (Exception e) {
+            return null;
         }
-        em.merge(board);
     }
-    
+
     @Override
-    public List<Boardtb> getUserBoards(Integer userid){
-        Usertb user = em.find(Usertb.class, userid);
-        Collection<Boardtb> boards = user.getBoardtbCollection();
-        return (List<Boardtb>) boards;
-    }
-    
-    @Override
-    public Boardtb getBoard(Integer userid, Integer boardID){
-        Usertb user = em.find(Usertb.class, userid);
-        Collection<Boardtb> boards = user.getBoardtbCollection();
-        for(Boardtb board : boards){
-            if(board.getBoardid() == boardID){
-                return em.find(Boardtb.class, board.getBoardid());
-            }else{
-                return null;
-            }
-        }
-        return null;
-    }
-    
-    @Override
-    public void setImageBoard(Integer userid, Integer imageID, Integer boardID) {
+    public boolean createBoard(Integer userid, String boardName) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        Boardtb board = em.find(Boardtb.class, boardID);
-        Imagetb image = em.find(Imagetb.class, imageID);
-
-        Collection<Boardtb> boards = user.getBoardtbCollection();
-        for (Boardtb b : boards) {
-            if (board == b) {
-
-            }
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Boardtb board = new Boardtb();
+            board.setBoardName(boardName);
+            board.setUserID(user);
+            Collection<Boardtb> boards = new ArrayList<Boardtb>();
+            boards.add(board);
+            user.setBoardtbCollection(boards);
+            em.persist(board);
+            em.merge(user);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-
     }
-    
+
+    @Override
+    public boolean updateBoardName(Integer userid, Integer boardid, String boardName) {
+        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Boardtb board = em.find(Boardtb.class, boardid);
+            board.setBoardName(boardName);
+            Collection<Boardtb> boards = user.getBoardtbCollection();
+            // TODO
+            Collection<Boardtb> new_boards = new ArrayList<>();
+            for (Boardtb b : boards) {
+                if (b.getBoardid() == boardid) {
+                    b.setBoardName(boardName);
+                }
+                new_boards.add(b);
+            }
+            em.merge(board);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public List<Boardtb> getUserBoards(Integer userid) {
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Collection<Boardtb> boards = user.getBoardtbCollection();
+            return (List<Boardtb>) boards;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Boardtb getBoard(Integer userid, Integer boardID) {
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Collection<Boardtb> boards = user.getBoardtbCollection();
+            for (Boardtb board : boards) {
+                if (board.getBoardid() == boardID) {
+                    return em.find(Boardtb.class, board.getBoardid());
+                } else {
+                    return null;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean setImageBoard(Integer userid, Integer imageID, Integer boardID) {
+        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Boardtb board = em.find(Boardtb.class, boardID);
+            Imagetb image = em.find(Imagetb.class, imageID);
+
+            Collection<Boardtb> boards = user.getBoardtbCollection();
+            for (Boardtb b : boards) {
+                if (boardID == b.getBoardid()) {
+                    Collection<Imagetb> images_in_board = b.getImagetbCollection();
+                    images_in_board.add(image);
+                    b.setImagetbCollection(images_in_board);
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Override
     public Imagetb getImage(Integer id) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Imagetb image = em.find(Imagetb.class, id);
-        return image;
-    }
-
-    @Override
-    public void uploadImage(Integer userid, String title, String description, String imageUrl, Collection<String> tags) {
-        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        Imagetb image = new Imagetb();
-        image.setCreationDate(new Date());
-        image.setTitle(title);
-        image.setDescription(description);
-        image.setImageUrl(imageUrl);
-        String tagString = "";
-        ArrayList<String> tagList = (ArrayList<String>) tags;
-        for (int count = 0; count < tagList.size(); count++) {
-            tagString = tagString + tagList.get(count) + ", ";
+        try {
+            Imagetb image = em.find(Imagetb.class, id);
+            return image;
+        } catch (Exception e) {
+            return null;
         }
-        image.setTags(tagString);
-        Collection<Imagetb> imageColl = user.getImagetbCollection1();
-        imageColl.add(image);
-        user.setImagetbCollection1(imageColl);
-        em.merge(user);
-        em.merge(image);
     }
 
     @Override
-    public void editImage(Integer id, Integer userid, String title, String description, String imageUrl, Collection<String> tags) {
+    public boolean uploadImage(Integer userid, String title, String description, String imageUrl, Collection<String> tags) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        Imagetb image = em.find(Imagetb.class, id);
-        if (image.getUserID() == user) {
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Imagetb image = new Imagetb();
+            image.setCreationDate(new Date());
             image.setTitle(title);
             image.setDescription(description);
             image.setImageUrl(imageUrl);
@@ -219,72 +265,123 @@ public class userbean implements userbeanLocal {
             user.setImagetbCollection1(imageColl);
             em.merge(user);
             em.merge(image);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean editImage(Integer id, Integer userid, String title, String description, String imageUrl, Collection<String> tags) {
+        //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Imagetb image = em.find(Imagetb.class, id);
+            if (image.getUserID() == user) {
+                image.setTitle(title);
+                image.setDescription(description);
+                image.setImageUrl(imageUrl);
+                String tagString = "";
+                ArrayList<String> tagList = (ArrayList<String>) tags;
+                for (int count = 0; count < tagList.size(); count++) {
+                    tagString = tagString + tagList.get(count) + ", ";
+                }
+                image.setTags(tagString);
+                Collection<Imagetb> imageColl = user.getImagetbCollection1();
+                imageColl.add(image);
+                user.setImagetbCollection1(imageColl);
+                em.merge(user);
+                em.merge(image);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
         }
 
     }
 
     // TODO
     @Override
-    public void deleteImage(Integer userid, Integer id) {
+    public boolean deleteImage(Integer userid, Integer id) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, userid);
-        Imagetb image = em.find(Imagetb.class, id);
-        Collection<Imagetb> userImages =  user.getImagetbCollection();
-        userImages.remove(image);
-        em.remove(image);
+        try {
+            Usertb user = em.find(Usertb.class, userid);
+            Imagetb image = em.find(Imagetb.class, id);
+            Collection<Imagetb> userImages = user.getImagetbCollection();
+            userImages.remove(image);
+            user.setImagetbCollection(userImages);
+            em.remove(image);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
-    
+
     // TODO
     @Override
-    public void likeImage(Integer id, Integer userid, Integer likerid) {
+    public boolean likeImage(Integer id, Integer userid, Integer likerid) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Imagetb image = em.find(Imagetb.class, id);
-        Usertb creator = em.find(Usertb.class, userid);
-        Usertb liker = em.find(Usertb.class, likerid);
-        Integer totalLikes = image.getLikeCount();
-        image.setLikeCount(totalLikes + 1);        
+        try {
+            Imagetb image = em.find(Imagetb.class, id);
+            Usertb creator = em.find(Usertb.class, userid);
+            Usertb liker = em.find(Usertb.class, likerid);
+            Integer totalLikes = image.getLikeCount();
+            image.setLikeCount(totalLikes + 1);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public List<Imagetb> searchImage(String searchQuery) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         //List<Imagetb> images = em.createNamedQuery("Imagetb.findAll").getResultList();
-        List<Imagetb> images = new ArrayList<Imagetb>();
-        String[] splited_search = searchQuery.split("\\s+");
-        for (String str : splited_search) {
-            images.addAll(em.createNamedQuery("Imagetb.findByTitle").setParameter("title", str).getResultList());
-            images.addAll(em.createNamedQuery("Imagetb.findByDescription").setParameter("description", str).getResultList());
+        try {
+            List<Imagetb> images = new ArrayList<Imagetb>();
+            String[] splited_search = searchQuery.split("\\s+");
+            for (String str : splited_search) {
+                images.addAll(em.createNamedQuery("Imagetb.findByTitle").setParameter("title", str).getResultList());
+                images.addAll(em.createNamedQuery("Imagetb.findByDescription").setParameter("description", str).getResultList());
 //            List<Imagetb> image = em.createNamedQuery("Imagetb.findByTitle").setParameter("Imagetb.findByTitle", str).getResultList();
+            }
+            return images;
+        } catch (Exception e) {
+            return null;
         }
-        return images;
     }
-    
+
     @Override
-    public void followUser(Integer follower, Integer follow) {
+    public boolean followUser(Integer follower, Integer follow) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        Usertb user = em.find(Usertb.class, follow);
-        Usertb user_follower = em.find(Usertb.class, follower);
-        Collection<Usertb> followee = user.getUsertbCollection();
-        followee.add(user_follower);
-        em.merge(user);
+        try {
+            Usertb user = em.find(Usertb.class, follow);
+            Usertb user_follower = em.find(Usertb.class, follower);
+            Collection<Usertb> followee = user.getUsertbCollection();
+            followee.add(user_follower);
+            em.merge(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
-    
+
     @Override
-    public Usertb login(String username, String password){
-        try{
+    public Usertb login(String username, String password) {
+        try {
             Query user_query = em.createQuery("SELECT u FROM Usertb u WHERE u.username = :username AND u.password = :password").
                     setParameter("username", username).setParameter("password", password);
             Usertb user = (Usertb) user_query.getResultList().get(0);
-            if(user != null)
+            if (user != null) {
                 return user;
-            else
+            } else {
                 return null;
-        }catch(Exception e){
+            }
+        } catch (Exception e) {
             return null;
         }
     }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
-
-    
 }
