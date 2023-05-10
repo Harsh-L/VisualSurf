@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -40,6 +43,7 @@ import jdk.jfr.Frequency;
  *
  * @author harsh
  */
+//@DeclareRoles({"Admin", "User"})
 @Path("restApis")
 @RequestScoped
 public class RestApisResource {
@@ -65,6 +69,7 @@ public class RestApisResource {
      */
     // USER METHODS
     // GET METHODS
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/users")
@@ -75,16 +80,20 @@ public class RestApisResource {
         try {
             if (user.getAllUsers() != null) {
                 return Response.ok(user.getAllUsers()).build();
+//                return user.getAllUsers();
             } else {
                 json = Json.createObjectBuilder().add("error", "users not found").build();
                 return Response.status(404).entity(json).build();
+//                return null;
             }
         } catch (Exception e) {
-            json = Json.createObjectBuilder().add("error", "Internal Server Error").build();
+            json = Json.createObjectBuilder().add("Error", "Internal Server Error").build();
             return Response.status(500).entity(json).build();
+//            return null;
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/user/name/{username}")
@@ -104,6 +113,7 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/user/id/{userid}")
@@ -122,6 +132,7 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/user/{userid}/boards")
@@ -141,6 +152,7 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/user/{userid}/boards/{boardid}")
@@ -159,6 +171,7 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/image/{imageid}")
@@ -179,6 +192,7 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/image")
@@ -199,26 +213,28 @@ public class RestApisResource {
     }
 
     // POST METHODS
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/login")
-    public Response login(@FormParam("username") String username, @FormParam("password") String password) {
-        JsonObject json = null;
-        if (user.login(username, password) != null) {
-            return Response.ok(user.login(username, password)).build();
-        } else {
-            json = Json.createObjectBuilder().add("error", "Error occured while Logging in").build();
-            return Response.status(404).entity(json).build();
-        }
-    }
+//    @PermitAll
+//    @POST
+//    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Path("/login")
+//    public Response login(@FormParam("username") String username, @FormParam("password") String password) {
+//        JsonObject json = null;
+//        if (user.login(username, password) != null) {
+//            return Response.ok(user.login(username, password)).build();
+//        } else {
+//            json = Json.createObjectBuilder().add("error", "Error occured while Logging in").build();
+//            return Response.status(404).entity(json).build();
+//        }
+//    }
 
+//    @RolesAllowed({"Admin", "User"})
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/addUser")
-    public Response insertUser(@FormParam("username") String username, @FormParam("name") String name, @FormParam("email") String email, @FormParam("password") String password, @FormParam("roleid") Integer roleid) {
+    public Response insertUser(Usertb user_data) {
         JsonObject json = null;
-
-        if (user.insertUser(username, name, email, password, roleid) == true) {
+        if (user.insertUser(user_data.getUsername(), user_data.getName(), user_data.getEmail(), user_data.getPassword(), user_data.getRoleID().getRoleID()) == true) {
             return Response.ok().build();
         } else {
             json = Json.createObjectBuilder().add("error", "Error occured while inserting User").build();
@@ -226,12 +242,13 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/user/{userid}/board/{boardname}")
-    public Response createBoard(@PathParam("userid") Integer userid, @FormParam("boardname") String boardname) {
+    public Response createBoard(@PathParam("userid") Integer userid, Boardtb board) {
         JsonObject json = null;
-        if (user.createBoard(userid, boardname) == true) {
+        if (user.createBoard(userid, board.getBoardName()) == true) {
             return Response.ok().build();
         } else {
             json = Json.createObjectBuilder().add("error", "Error creating board").build();
@@ -239,18 +256,18 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Path("/upload")
-    public Response uploadImage(@FormParam("userid") Integer userid, @FormParam("title") String title, @FormParam("description") String description, @FormParam("url") String imageUrl, @FormParam("tags") String Tags) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("user/{userid}/upload")
+    public Response uploadImage(@PathParam( "userid") Integer userid, Imagetb image) {
         JsonObject json = null;
-
-        String[] tags_collection_temp = Tags.split(",");
-        Collection<String> tags_collection = new ArrayList<>();
-        for (String tag : tags_collection_temp) {
-            tags_collection.add(tag);
-        }
-        if (user.uploadImage(userid, title, description, imageUrl, tags_collection) == true) {
+//        String[] tags_collection_temp = Tags.split(",");
+//        Collection<String> tags_collection = new ArrayList<>();
+//        for (String tag : tags_collection_temp) {
+//            tags_collection.add(tag);
+//        }
+        if (user.uploadImage(userid, image.getTitle(), image.getDescription(), image.getImageUrl(), image.getTags()) == true) {
             return Response.ok().build();
         } else {
             json = Json.createObjectBuilder().add("error", "Error occured while uploading image").build();
@@ -258,13 +275,14 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/image/{imageid}")
-    public Response setImageBoard(@PathParam("imageid") Integer imageid, @FormParam("userid") Integer userid, @FormParam("boardid") Integer boardid) {
+    public Response setImageBoard(@PathParam("imageid") Integer imageid, Usertb user_data, Boardtb board_data) {
         JsonObject json = null;
         try {
-            if (user.setImageBoard(userid, imageid, boardid) == true) {
+            if (user.setImageBoard(user_data.getUserID(), imageid, board_data.getBoardid()) == true) {
                 return Response.ok().build();
             } else {
                 json = Json.createObjectBuilder().add("error", "Error occured while uploading image").build();
@@ -276,33 +294,35 @@ public class RestApisResource {
         }
     }
 
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/image/{imageid}/like")
-    public Response likeImage(@PathParam("imageid") Integer imageid, @FormParam("uploader") Integer uploaderid, @FormParam("liker") Integer likerid) {
-        JsonObject json = null;
-        try {
-            if (user.likeImage(imageid, uploaderid, likerid) == true) {
-                return Response.ok().build();
-            } else {
-                json = Json.createObjectBuilder().add("error", "Error occured while liking image").build();
-                return Response.status(501).entity(json).build();
-            }
-        } catch (Exception e) {
-            json = Json.createObjectBuilder().add("error", "Error occured while liking image").build();
-            return Response.status(501).entity(json).build();
-        }
-    }
+//    @RolesAllowed({"User"})
+//    @POST
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Path("/image/{imageid}/like")
+//    public Response likeImage(@PathParam("imageid") Integer imageid, @FormParam("uploader") Integer uploaderid, @FormParam("liker") Integer likerid) {
+//        JsonObject json = null;
+//        try {
+//            if (user.likeImage(imageid, uploaderid, likerid) == true) {
+//                return Response.ok().build();
+//            } else {
+//                json = Json.createObjectBuilder().add("error", "Error occured while liking image").build();
+//                return Response.status(501).entity(json).build();
+//            }
+//        } catch (Exception e) {
+//            json = Json.createObjectBuilder().add("error", "Error occured while liking image").build();
+//            return Response.status(501).entity(json).build();
+//        }
+//    }
 
     // PUT METHODS
+//    @RolesAllowed({"Admin", "User"})
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/user/{userid}")
-    public Response updateUser(@PathParam("userid") Integer userid, @FormParam("username") String username, @FormParam("name") String name, @FormParam("email") String email) {
+    public Response updateUser(@PathParam("userid") Integer userid, Usertb user_data) {
         JsonObject json = null;
         try {
             if (user.searchUserById(userid) != null) {
-                if (user.updateUser(userid, username, name, email)) {
+                if (user.updateUser(userid, user_data.getUsername(), user_data.getName(), user_data.getEmail())) {
                     return Response.ok().build();
                 } else {
                     json = Json.createObjectBuilder().add("error", "Error occured while updating user").build();
@@ -318,13 +338,14 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/user/{userid}/board")
-    public Response updateBoardName(@PathParam("userid") Integer userid, @FormParam("boardid") Integer boardid, @FormParam("boardName") String boardname) {
+    @Path("/user/{userid}/board/{boardid}")
+    public Response updateBoardName(@PathParam("userid") Integer userid, @PathParam("boardid") Integer boardid, Boardtb board_data) {
         JsonObject json = null;
         try {
-            if (user.updateBoardName(userid, boardid, boardname) == true) {
+            if (user.updateBoardName(userid, boardid, board_data.getBoardName()) == true) {
                 return Response.ok().build();
             } else {
                 json = Json.createObjectBuilder().add("error", "Board Not Found").build();
@@ -337,6 +358,7 @@ public class RestApisResource {
     }
 
     // DELETE METHODS
+//    @RolesAllowed({"Admin", "User"})
     @DELETE
     @Path("/user/{userid}")
     public Response deleteUser(@PathParam("userid") Integer userid) {
@@ -360,6 +382,7 @@ public class RestApisResource {
         }
     }
 
+//    @RolesAllowed({"Admin", "User"})
     @DELETE
     @Path("/user/{userid}/image/{imageid}")
     public Response deleteImage(@PathParam("userid") Integer userid, @PathParam("imageid") Integer imageid) {
@@ -384,13 +407,14 @@ public class RestApisResource {
 
     // ADMIN METHODS
     // GET METHODS
+//    @RolesAllowed({"Admin"})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/admins")
     public Response getAdmins() {
         JsonObject json = null;
         try {
-            if (admin.getAdminList()!= null) {
+            if (admin.getAdminList() != null) {
                 return Response.ok(admin.getAdminList()).build();
             } else {
                 json = Json.createObjectBuilder().add("error", "admins not found").build();
@@ -403,6 +427,7 @@ public class RestApisResource {
     }
 
     // DELETE METHODS
+//    @RolesAllowed({"Admin"})
     @DELETE
     @Path("/admin/{adminid}")
     public Response deleteAdmin(@PathParam("adminid") Integer adminid) {

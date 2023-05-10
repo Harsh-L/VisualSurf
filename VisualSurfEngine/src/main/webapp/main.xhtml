@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      >
+    <h:head>
+        <title>login</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+    </h:head>
+    <h:body>
+
+        <style>
+            .container {
+                position: relative;
+                width: 100%;
+            }
+
+            .text {
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+                color: white;
+                text-align: center;
+
+
+            }
+
+            .learn{
+                position: relative;
+                width: 100%;
+            }
+
+            .text {
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+                color: white;
+                text-align: center;
+
+
+            }
+
+
+        </style>        
+        <div class="w3-top">
+            <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+                <a href="home.jsf" class="w3-bar-item w3-button"><b>VSE</b></a>
+                <!--                 Float links to the right. Hide them on small screens -->
+                <div class="w3-right w3-hide-small">
+                    <a href="#surfs" class="w3-bar-item w3-button">Surfs</a>
+                    <a href="#about" class="w3-bar-item w3-button">About</a>
+                    <a href="#learn" class="w3-bar-item w3-button">Learn</a>
+                    <a href="login.jsf" class="w3-bar-item w3-button w3-card w3-hover-text-brown">login</a>
+                </div>
+            </div>
+        </div>
+
+        Header 
+        <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+
+
+        </header>
+
+        <!--        <video autoplay loop muted>
+            <source src="pexels-vlada-karpovich-9968969-3840x2160-25fps.mp4" type="video/mp4"/>
+                Your browser does not support the video tag.
+          </video>-->
+        <hr id="surfs"/>   
+        <!-- !PAGE CONTENT! -->
+        <div class="w3-main w3-content w3-padding" style="max-width:1200px;margin-top:100px"/>
+
+        <!--   First Photo Grid
+          <div class="w3-row-padding w3-padding-16 w3-center" id="food">
+            <div class="w3-quarter">
+              <img src="https://i.pinimg.com/564x/d1/42/af/d142aff39a5ed30cd29cfe0e5f621a2c.jpg" alt="Sandwich" style="width:100%" height="500px"/>
+              <h3>The Perfect Sandwich, A Real NYC Classic</h3>
+              <p>New York City is famous for its wide variety of mouth-watering sandwiches that are as diverse as the city itself. From classic deli-style pastrami on rye to gourmet creations with unique flavor combinations.</p>
+            </div>                                                                                                                                                                          
+            <div class="w3-quarter">
+                <img src="https://i.pinimg.com/736x/71/c4/6d/71c46d83189006c45c3ce0d45c74bf65.jpg" alt="fashion" style="width:100%" height="500px"/>
+              <h3>The ultimate fashion styles.</h3>
+              <p>Fashion is a dynamic and constantly evolving industry that has the power to influence culture, society, and personal expression. From the latest runway trends to street style, fashion encompasses a wide range of styles and influences.</p>
+            </div>
+            <div class="w3-quarter">
+              <img src="https://i.pinimg.com/564x/03/69/c3/0369c3aded5c4f3b05cda553743f190d.jpg" alt="Cherries" style="width:100%" height="500px"/>
+              <h3>Cherries, interrupted</h3>
+              <p>These sweet and tart fruits are the perfect addition to any dish, from classic cherry pies to modern cocktails.</p>
+              <p>What else?</p>
+            </div>
+            <div class="w3-quarter">
+              <img src="https://i.pinimg.com/564x/e2/75/45/e275455bf1faddbebdd4fa83b35fb5c9.jpg" alt="home decore" style="width:100%" height="500px"/>
+              <h3>The eye catching Home decore</h3>
+              <p>Lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+            </div>
+          </div>
+        -->
+        <!-- Photo Grid-->
+        <div class="w3-row-padding w3-padding-16 w3-center">
+            <div class="w3-quarter">
+                <img src="https://i.pinimg.com/564x/f7/c5/29/f7c5297043958c803a7f246c9fc0f6ca.jpg" alt="Popsicle" style="width:100%" height="500px"/>
+                <h3>All I Need Is a Popsicle</h3>
+                <p>Lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+            </div>
+            <div class="w3-quarter">
+                <img src="https://i.pinimg.com/564x/4b/ec/bb/4becbb7f707645ffb58739efc33cdbdc.jpg" alt="Salmon" style="width:100%" height="500px"/>
+                <h3>Salmon For Your Skin</h3>
+                <p>Once again, some random text to lorem lorem lorem lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+            </div>
+            <div class="w3-quarter">
+                <img src="https://i.pinimg.com/564x/28/91/3d/28913d62665d50e8d7832db7051164a9.jpg" alt="Sandwich" style="width:100%" height="500px;"/>
+                <h3>The Perfect Sandwich, A Real Classic</h3>
+                <p>Just some random text, lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+            </div>
+            <div class="w3-quarter">
+                <img src="https://i.pinimg.com/564x/50/b1/2d/50b12d57a19d602a6416b960517bdb56.jpg" alt="Croissant" style="width:100%" height="500px"/>
+                <h3>Le French</h3>
+                <p>Lorem lorem lorem lorem ipsum text praesent tincidunt ipsum lipsum.</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="w3-center w3-padding-32">
+            <div class="w3-bar">
+                <a href="#" class="w3-bar-item w3-button w3-hover-brown">«</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-brown">1</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-brown">2</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-brown">3</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-brown">4</a>
+                <a href="#" class="w3-bar-item w3-button w3-hover-brown">»</a>
+            </div>
+        </div>
+
+
+
+        <!-- About Section -->
+        <div class="container" style="position: relative" id="about">  
+
+            <img src="https://i.pinimg.com/564x/d9/07/d1/d907d1f16c0c03cf159ca71ea00afc00.jpg"  alt="Me" class="w3-image" style="display:block;" width="100%" height="450"/>
+            <!--    <p style="position: absolute; left: 50%; transform: translate(-50%, -50%); color: #ffffff;z-index:2  "><h1 align="center" style="font-family: monospace; font-size: 58px; font-style: oblique; font-weight: bold"> About US<br/></h1></p>
+                <p style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h1 align="center">Welcome to visual surf engine, the ultimate destination for surfers around the world. </h1></p>
+                
+                <p style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h2 align="center"> Our platform is designed to provide surf enthusiasts with a unique experience by combining state-of-the-art visual search technology with expert knowledge of the surfing world. </h2></p>    
+            -->
+            <div class="text" align="center">
+                <h1>About US</h1>
+                <p style="top: 55%; left: 50%;"><h2>Welcome to visual surf engine, the ultimate destination for surfers around the world.Our platform is designed to provide surf enthusiasts with a unique experience by combining state-of-the-art visual search technology with expert knowledge of the surfing world.</h2></p>
+            </div>
+        </div>
+
+
+        <!-- learn -->
+
+        <div class="container" style="position: relative" id="learn">  
+
+
+            <img src="https://i.pinimg.com/564x/5e/ff/d2/5effd256871c1ca1b89989e354911e7e.jpg"  alt="Me" class="w3-image" style="display:block;" width="100%" height="533"/>
+            <!--    <p style="position: absolute; top:7%; left: 50%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h2>Learn how it works</h2></p>
+                <p style="position: absolute; top: 45%; left: 24%; transform: translate(-50%, -50%); color: #ffffff; "><h2 style="font-family: monospace; font-size: 50px; font-style: oblique; font-weight: bold"> Surf<br/></h2></p>
+                <p style="position: absolute; top: 51%; left: 24%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h2 align="center">for the Content</h2></p>
+                
+                <p style="position: absolute; top: 64%; left: 24%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h2 align="center">Think of something you like...<br/> and Surf for the visual content you wish to watch </h2></p>    
+            -->
+            <div class="text" align="center">
+                <p style="margin-top: 5px;"><h1>Learn how it works<br/></h1></p>
+                <h1>Surf</h1>
+                <h2>for the Content</h2>
+                <p style="top: 55%; left: 50%;"><h2>Welcome to visual surf engine, the ultimate destination for surfers around the world.Our platform is designed to provide surf enthusiasts with a unique experience by combining state-of-the-art visual search technology with expert knowledge of the surfing world.</h2></p>
+            </div>
+        </div>
+
+        <div class="save" style="position: relative">  
+
+            <img src="https://i.pinimg.com/564x/ec/1e/3e/ec1e3ec3f54443fd91328f8553c502cf.jpg"  alt="Me" class="w3-image" style="display:block;" width="100%" height="450"/>
+            <p style="position: absolute; top: 39%; left: 72%; transform: translate(-50%, -50%); color: #ffffff; "><h1 style="font-family: monospace; font-size: 58px; font-style: oblique; font-weight: bold"> Save<br/></h1></p>
+            <p style="position: absolute; top: 47%; left: 72%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h1>idea you like</h1></p>
+
+            <p style="position: absolute; top: 58%; left: 72%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h2 align="center">Collect your favourite<br/> So you can get back to them later </h2></p>    
+
+        </div>
+
+
+        <div class="save" style="position: relative">  
+
+            <img src="https://i.pinimg.com/564x/35/3f/a1/353fa1c009a822f79038d8baa3222a33.jpg"  alt="Me" class="w3-image" style="display:block;" width="100%" height="450"/>
+            <p style="position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%); color: #ffffff; "><h1 align="center" style="font-family: monospace; font-size: 55px; font-style: oblique; font-weight: bold"> See it,<br/> Make it, <br/>Try it.<br/></h1></p>
+            <!--    <p style="position: absolute; top: 47%; left: 50%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h1>idea you like</h1></p>-->
+
+            <p style="position: absolute; top: 58%; left: 50%; transform: translate(-50%, -50%); z-index: 1;color: #ffffff"><h2 align="center" style="font-size: 38px;">Try it yourself and<br/> post for people to see it </h2></p>    
+
+        </div>    
+
+        <!-- Footer -->
+
+        <footer> 
+            <p align="center">© 2023 Copyright: surfs.com</p>
+        </footer>
+    </h:body>
+</html>
+

@@ -6,6 +6,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,7 @@ public class Categorytb implements Serializable {
     @Size(max = 50)
     @Column(name = "catName")
     private String catName;
+    @JsonbTransient
     @ManyToMany(mappedBy = "categorytbCollection")
     private Collection<Usertb> usertbCollection;
 

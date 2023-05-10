@@ -7,6 +7,7 @@ package entity;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -67,8 +68,10 @@ public class Imagetb implements Serializable {
     private Date creationDate;
     @Column(name = "likeCount")
     private Integer likeCount;
+    @JsonbTransient
     @ManyToMany(mappedBy = "imagetbCollection")
     private Collection<Usertb> usertbCollection;
+    @JsonbTransient
     @ManyToMany(mappedBy = "imagetbCollection")
     private Collection<Boardtb> boardtbCollection;
     @JoinColumn(name = "userID", referencedColumnName = "UserID")

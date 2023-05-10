@@ -4,8 +4,11 @@
  */
 package entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import java.util.Collection;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +26,8 @@ import javax.validation.constraints.Size;
  *
  * @author harsh
  */
+
+
 @Entity
 @Table(name = "roletb")
 @NamedQueries({
@@ -39,7 +44,8 @@ public class Roletb implements Serializable {
     private Integer roleID;
     @Size(max = 20)
     @Column(name = "roleName")
-    private String roleName;
+    private String roleName; 
+    @JsonbTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "roleID")
     private Collection<Usertb> usertbCollection;
 

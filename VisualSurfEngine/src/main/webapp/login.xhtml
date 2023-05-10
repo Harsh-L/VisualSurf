@@ -3,7 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      >
+          
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>login</title>
         <meta charset="UTF-8"/>
@@ -118,8 +120,7 @@
 
 
         <div class="formDiv">
-            <h:form style="align-content:  center;">
-
+            <form style="align-content:  center;" method="POST">
                 <div class="inputdiv">
 
 
@@ -135,13 +136,13 @@
                     <br/><h:link style="font-size: 100% ; text-align: left; color: #24787b " value="Forgot Password?"/> <br/>
                 </div>
                 <div class="loginDiv" style=" margin-left: 20px; margin-right: 20px; padding: 10px 20px">
-                    <h:commandButton id="loginButton" value="Login" action="${bean.login}" styleClass="logingbutton" style="width: 45%;" />
+                    <input id="loginButton" type="submit" value="Login" styleClass="logingbutton" style="width: 45%;" />
                 </div>
 
                 <div class="registerhere">
                     <br/>
                     <h5 style="font-family: serif; font-size: 20px;"> Don't have an account? 
-                        <a style="color: #24787b " href="./User_Pages/register.jsf">register here</a></h5>
+                        <a style="color: #24787b " href="./User/register.jsf">register here</a></h5>
                     <!--<h:commandLink value="register" action="register"/>-->
                 </div>
                 <!--            <div class="signInWithDiv">
@@ -159,14 +160,14 @@
                               <i class="fab fa-linkedin-in">in</i>
                             </button>
                           </div>-->
-            </h:form>
+            </form>
         </div>
 
 
 
 
-        <!-- Footer -->
-
+        <!-- Footer -->       
+        
         <footer> 
             <p align="center">© 2023 Copyright: surfs.com</p>
         </footer>

@@ -18,12 +18,12 @@ import javax.persistence.PersistenceContext;
  *
  * @author harsh
  */
-@RolesAllowed("Admin")
+//@RolesAllowed("Admin")
 @Stateless
 public class adminbean implements adminbeanLocal {
 
     @PersistenceContext(unitName = "my_persistence_unit")
-    EntityManager em;
+    private EntityManager em;
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 

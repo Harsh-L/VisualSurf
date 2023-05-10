@@ -18,17 +18,17 @@ import javax.ejb.Local;
 public interface adminbeanLocal {
     
     // user operations
-    public boolean insertUser(String username, String name, String email, String password, Integer role); // POST - DONE
-    public boolean updateUser(int id, String username, String name, String email); // PUT - DONE
-    public boolean deleteUser(int id); // DELETE - DONE
-    public List<Usertb> searchUserByName(String username); // GET - DONE
-    public Usertb searchUserById(int id); // GET - DONE
+    public boolean insertUser(String username, String name, String email, String password, Integer role); // POST - DONE // READY
+    public boolean updateUser(int id, String username, String name, String email); // PUT - DONE // READY
+    public boolean deleteUser(int id); // DELETE - DONE // READY
+    public List<Usertb> searchUserByName(String username); // GET - DONE // READY
+    public Usertb searchUserById(int id); // GET - DONE // READY
     // admin operations
-    public boolean deleteAdmin(int id, Usertb user); // DELETE - DONE
-    public List<Usertb> getAdminList(); // GET - 
+    public boolean deleteAdmin(int id, Usertb user); // DELETE - DONE // READY
+    public List<Usertb> getAdminList(); // GET - DONE // READY
     // image operations
-    public Imagetb getImage(Integer id); // GET - DONE
-    public boolean deleteImage(Integer userid, Integer id); // DELETE - DONE
+    public Imagetb getImage(Integer id); // GET - DONE // READY
+    public boolean deleteImage(Integer userid, Integer id); // DELETE - DONE // READY
     // used cdi bean 
     public Roletb getAdminRoleid(); // DONE
     public Roletb getUserRoleid(); // DONE

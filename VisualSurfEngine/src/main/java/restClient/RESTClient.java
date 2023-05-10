@@ -39,10 +39,6 @@ public class RESTClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
-    public Response likeImage(Object requestEntity, String imageid) throws ClientErrorException {
-        return webTarget.path(java.text.MessageFormat.format("image/{0}/like", new Object[]{imageid})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
-    }
-
     public <T> T getBoard(Class<T> responseType, String userid, String boardid) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("user/{0}/boards/{1}", new Object[]{userid, boardid}));
@@ -63,16 +59,12 @@ public class RESTClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
-    public Response login(Object requestEntity) throws ClientErrorException {
-        return webTarget.path("login").request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
-    }
-
     public Response deleteAdmin(String adminid) throws ClientErrorException {
         return webTarget.path(java.text.MessageFormat.format("admin/{0}", new Object[]{adminid})).request().delete(Response.class);
     }
 
-    public Response updateBoardName(Object requestEntity, String userid) throws ClientErrorException {
-        return webTarget.path(java.text.MessageFormat.format("user/{0}/board", new Object[]{userid})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
+    public Response updateBoardName(Object requestEntity, String userid, String boardid) throws ClientErrorException {
+        return webTarget.path(java.text.MessageFormat.format("user/{0}/board/{1}", new Object[]{userid, boardid})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
     }
 
     public Response insertUser(Object requestEntity) throws ClientErrorException {
@@ -112,8 +104,8 @@ public class RESTClient {
         return webTarget.path(java.text.MessageFormat.format("user/{0}/image/{1}", new Object[]{userid, imageid})).request().delete(Response.class);
     }
 
-    public Response uploadImage() throws ClientErrorException {
-        return webTarget.path("upload").request().post(null, Response.class);
+    public Response uploadImage(Object requestEntity, String userid) throws ClientErrorException {
+        return webTarget.path(java.text.MessageFormat.format("user/{0}/upload", new Object[]{userid})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
     }
 
     public <T> T getImage(Class<T> responseType, String imageid) throws ClientErrorException {

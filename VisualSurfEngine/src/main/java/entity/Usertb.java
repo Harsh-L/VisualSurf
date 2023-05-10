@@ -4,8 +4,11 @@
  */
 package entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
 import java.util.Collection;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -234,5 +237,5 @@ public class Usertb implements Serializable {
     public String toString() {
         return "entity.Usertb[ userID=" + userID + " ]";
     }
-    
+
 }

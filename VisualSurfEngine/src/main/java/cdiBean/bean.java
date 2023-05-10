@@ -12,17 +12,30 @@ import entity.Categorytb;
 import entity.Imagetb;
 import entity.Roletb;
 import entity.Usertb;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.security.MessageDigest;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
+import javax.transaction.UserTransaction;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Request;
@@ -37,6 +50,12 @@ import restClient.RESTClient;
 @SessionScoped
 public class bean implements Serializable {
 
+    @Resource
+    private UserTransaction utx;
+    @Inject
+    private Pbkdf2PasswordHash passwordHash;
+    
+    
     @EJB
     adminbeanLocal admin;
     @EJB
@@ -44,6 +63,9 @@ public class bean implements Serializable {
 
     @Inject
     private HttpServletRequest request;
+
+    @QueryParam("searchString")
+    private String queryParam;
 
     Collection<Accounttypetb> accTypes; // DONE
     GenericType<Collection<Accounttypetb>> gen_accTypes; // done
@@ -72,9 +94,12 @@ public class bean implements Serializable {
     Usertb userData; //done
     GenericType<Usertb> gen_userData; // done
 
+    Usertb posterData;
+
     RESTClient client;
     Response res;
     boolean isAdmin = false;
+    private Part uploaded_image;
 
     /**
      * Creates a new instance of bean
@@ -108,6 +133,7 @@ public class bean implements Serializable {
         userData = new Usertb();
         gen_userData = new GenericType<Usertb>() {
         };
+        posterData = new Usertb();
     }
 
     public boolean isIsAdmin() {
@@ -118,16 +144,20 @@ public class bean implements Serializable {
         this.isAdmin = isAdmin;
     }
 
-    public Collection<Usertb> getAllUsers() {
-        res = client.getAllUsers(Response.class);
-        Collection<Usertb> tempUsers = new ArrayList<>();
-        if (res == Response.noContent().build()) {
-            return null;
-        } else if (res == Response.ok(tempUsers).build()) {
-            return res.readEntity(gen_users);
-        } else {
-            return null;
-        }
+    public String getQueryParam() {
+        return queryParam;
+    }
+
+    public void setQueryParam(String queryParam) {
+        this.queryParam = queryParam;
+    }
+
+    public Part getUploaded_image() {
+        return uploaded_image;
+    }
+
+    public void setUploaded_image(Part uploaded_image) {
+        this.uploaded_image = uploaded_image;
     }
 
     public Usertb getUserData() {
@@ -136,6 +166,14 @@ public class bean implements Serializable {
 
     public void setUserData(Usertb userData) {
         this.userData = userData;
+    }
+
+    public Usertb getLikerData() {
+        return posterData;
+    }
+
+    public void setLikerData(Usertb likerData) {
+        this.posterData = likerData;
     }
 
 //    public Usertb getUserData(int userid) {
@@ -163,36 +201,31 @@ public class bean implements Serializable {
         this.imageData = imageData;
     }
 
-    public String login() {
-        res = client.login(userData);
-        if (res == Response.ok().build()) {
-            HttpSession session = request.getSession(true);
-            session.setAttribute("username", userData.getUsername());
-            session.setAttribute("userid", userData.getUserID());
-            session.setAttribute("role", userData.getRoleID().getRoleName());
-            return "home.jsf";
+    public Collection<Usertb> getAllUsers() {
+        res = client.getAllUsers(Response.class);
+        Collection<Usertb> tempUsers = new ArrayList<>();
+        if (res == Response.noContent().build()) {
+            return null;
+        } else if (res == Response.ok(tempUsers).build()) {
+            return res.readEntity(gen_users);
         } else {
-            return "login.jsf";
+            return null;
         }
-    }
-
-    public String logout() {
-        HttpSession session = request.getSession(true);
-        session.setAttribute("username", "");
-        session.setAttribute("userid", "");
-        session.setAttribute("role", "");
-        session.invalidate();
-        return "login.jsf";
     }
 
     public String registerUser() {
         Roletb role_data = admin.getUserRoleid();
         userData.setRoleID(role_data);
+        // Hashing Password
+        String hashedPassword =  passwordHash.generate(userData.getPassword().toCharArray());
+        userData.setPassword(hashedPassword);
+        
         res = client.insertUser(userData);
         if (res == Response.ok().build()) {
+            userData = new Usertb();
             return "login.jsf";
         } else {
-            return "User_pages/register.jsf";
+            return "User/register.jsf";
         }
     }
 
@@ -206,9 +239,10 @@ public class bean implements Serializable {
         }
         res = client.insertUser(userData);
         if (res == Response.ok().build()) {
-            return "Admin_Pages/registerAdmin.jsf";
+            userData = new Usertb();
+            return "Admin/adminList.jsf";
         } else {
-            return "Admin_Pages/registerAdmin.jsf";
+            return "Admin/registerAdmin.jsf";
         }
     }
 
@@ -216,6 +250,7 @@ public class bean implements Serializable {
         res = client.findUserByName(Response.class, userData.getName());
         if (res == Response.ok().build()) {
             Collection<Usertb> users = res.readEntity(gen_users);
+            userData = new Usertb();
             return users;
         } else {
             return null;
@@ -226,6 +261,7 @@ public class bean implements Serializable {
         res = client.findUserByID(Response.class, userData.getUserID().toString());
         if (res == Response.ok().build()) {
             Collection<Usertb> users = res.readEntity(gen_users);
+            userData = new Usertb();
             return users;
         } else {
             return null;
@@ -236,10 +272,182 @@ public class bean implements Serializable {
         res = client.findUserBoards(Response.class, userData.getUserID().toString());
         if (res == Response.ok().build()) {
             Collection<Boardtb> boards = res.readEntity(gen_boards);
+            userData = new Usertb();
             return boards;
         } else {
             return null;
         }
     }
 
+    public Boardtb findBoard() {
+        res = client.getBoard(Response.class, userData.getUserID().toString(), boardData.getBoardid().toString());
+        if (res == Response.ok().build()) {
+            Boardtb board = res.readEntity(gen_boardData);
+            userData = new Usertb();
+            boardData = new Boardtb();
+            return board;
+        } else {
+            return null;
+        }
+    }
+
+    public void likeImage() {
+        if (user.likeImage(imageData.getImageID(), posterData.getUserID(), userData.getUserID()) == true) {
+        }
+    }
+
+    public Imagetb getImage() {
+        res = client.getImage(Response.class, imageData.getImageID().toString());
+        if (res == Response.ok().build()) {
+            Imagetb image = res.readEntity(gen_imageData);
+            imageData = new Imagetb();
+            return image;
+        } else {
+            return null;
+        }
+    }
+
+    public Collection<Imagetb> searchImage() {
+        res = client.getImageByName(Response.class, queryParam);
+        if (res == Response.ok().build()) {
+            Collection<Imagetb> images = res.readEntity(gen_images);
+            return images;
+        } else {
+            return null;
+        }
+    }
+
+    public Collection<Usertb> searchUser() {
+        res = client.findUserByName(Response.class, queryParam);
+        if (res == Response.ok().build()) {
+            Collection<Usertb> users = res.readEntity(gen_users);
+            return users;
+        } else {
+            return null;
+        }
+    }
+
+    public String createBoard() {
+        res = client.createBoard(boardData, userData.getUserID().toString(), boardData.getBoardName());
+        if (res == Response.ok().build()) {
+            userData = new Usertb();
+            boardData = new Boardtb();
+            return "./boards";
+        } else {
+            return "./";
+        }
+    }
+
+    public String uploadImage() throws IOException {
+        InputStream input = null;
+        OutputStream output = null;
+        FacesContext context = FacesContext.getCurrentInstance();
+        String webAppRoot = context.getExternalContext().getRealPath("/");
+        String relativePath = webAppRoot + "..\\..\\src\\main\\webapp\\resources\\img";
+
+        try {
+//            utx.begin();
+            // insert image data
+            res = client.uploadImage(imageData, String.valueOf(userData.getUserID()));
+            if (res == Response.ok().build()) {
+                int userid = userData.getUserID();
+                userData = new Usertb();
+                imageData = new Imagetb();
+
+                // image upload
+                input = uploaded_image.getInputStream();
+                String file_name = uploaded_image.getSubmittedFileName();
+                int lastIndex = file_name.lastIndexOf(".");
+                String file_extension = file_name.substring(lastIndex + 1);
+                double file_value = user.getMaxImageID();
+
+                String file_new_name = String.valueOf(file_value) + "." + file_extension;
+                output = new FileOutputStream(new File(relativePath, file_new_name));
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = input.read(buffer)) > 0) {
+                    output.write(buffer, 0, length);
+                }
+//                utx.commit();
+                return "user/" + String.valueOf(userid);
+            } else {
+//                utx.rollback();
+                return String.valueOf(res);
+            }
+        } catch (Exception e) {
+            try {
+//                utx.rollback();
+                return String.valueOf(res);
+            } catch (Exception ex) {
+                return String.valueOf(res);
+            }
+        } finally {
+            if (input != null) {
+                input.close();
+            }
+            if (output != null) {
+                output.close();
+            }
+        }
+    }
+
+    public String setImageBoard() {
+        res = client.setImageBoard(boardData, imageData.getImageID().toString());
+        if (res == Response.ok().build()) {
+            imageData = new Imagetb();
+            return "./";
+        } else {
+            return "./";
+        }
+    }
+
+    public String updateUser() {
+        res = client.updateUser(userData, userData.getUserID().toString());
+        if (res == Response.ok().build()) {
+            userData = new Usertb();
+            return "./";
+        } else {
+            return "./";
+        }
+    }
+
+    public String deleteUser() {
+        res = client.deleteUser(userData.getUserID().toString());
+        if (res == Response.ok().build()) {
+            userData = new Usertb();
+            return "/main.jsf";
+        } else {
+            return "./";
+        }
+    }
+
+    public String deleteImage() {
+        res = client.deleteImage(userData.getUserID().toString(), imageData.getImageID().toString());
+        if (res == Response.ok().build()) {
+            userData = new Usertb();
+            imageData = new Imagetb();
+            return "./image";
+        } else {
+            return res.toString();
+        }
+    }
+
+    public Collection<Usertb> getAdmins() {
+        res = client.getAdmins(Response.class);
+        Collection<Usertb> admins = new ArrayList<>();
+        if (res == Response.ok(admins).build()) {
+            return res.readEntity(gen_users);
+        } else {
+            return null;
+        }
+    }
+
+    public String deleteAdmin() {
+        res = client.deleteAdmin(userData.getUserID().toString());
+        if (res == Response.ok().build()) {
+            return "./";
+        } else {
+            return "./";
+        }
+    }
 }

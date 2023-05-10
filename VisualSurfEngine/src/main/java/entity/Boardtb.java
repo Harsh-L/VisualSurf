@@ -6,6 +6,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Collection;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +43,7 @@ public class Boardtb implements Serializable {
     @Size(max = 30)
     @Column(name = "boardName")
     private String boardName;
+    @JsonbTransient
     @JoinTable(name = "board_imagetb", joinColumns = {
         @JoinColumn(name = "boardID", referencedColumnName = "boardid")}, inverseJoinColumns = {
         @JoinColumn(name = "imageID", referencedColumnName = "imageID")})

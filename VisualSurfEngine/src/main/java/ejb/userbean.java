@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,12 +24,12 @@ import javax.persistence.Query;
  *
  * @author harsh
  */
-@RolesAllowed("User")
+//@RolesAllowed("User")
 @Stateless
 public class userbean implements userbeanLocal {
 
     @PersistenceContext(unitName = "my_persistence_unit")
-    EntityManager em;
+    private EntityManager em;
 
     @Override
     public boolean insertUser(String username, String name, String email, String password, Integer roleID) {
@@ -95,17 +96,27 @@ public class userbean implements userbeanLocal {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         try {
             Usertb user = em.find(Usertb.class, id);
+            System.err.print("user found");
             return user;
         } catch (Exception e) {
+            System.err.print("not found");
             return null;
         }
     }
 
     @Override
-    public List<Usertb> getAllUsers() {
+    public Collection<Usertb> getAllUsers() {
         try {
-            return em.createNamedQuery("Usertb.findAll").getResultList();
+            Collection<Usertb> users = em.createNamedQuery("Usertb.findAll").getResultList();
+            if (!users.isEmpty()) {
+
+                return users;
+            } else {
+                return null;
+            }
         } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e);
             return null;
         }
     }
@@ -245,7 +256,7 @@ public class userbean implements userbeanLocal {
     }
 
     @Override
-    public boolean uploadImage(Integer userid, String title, String description, String imageUrl, Collection<String> tags) {
+    public boolean uploadImage(Integer userid, String title, String description, String imageUrl, String tags) {
         //throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         try {
             Usertb user = em.find(Usertb.class, userid);
@@ -254,12 +265,12 @@ public class userbean implements userbeanLocal {
             image.setTitle(title);
             image.setDescription(description);
             image.setImageUrl(imageUrl);
-            String tagString = "";
-            ArrayList<String> tagList = (ArrayList<String>) tags;
-            for (int count = 0; count < tagList.size(); count++) {
-                tagString = tagString + tagList.get(count) + ", ";
-            }
-            image.setTags(tagString);
+//            String tagString = "";
+//            ArrayList<String> tagList = (ArrayList<String>) tags;
+//            for (int count = 0; count < tagList.size(); count++) {
+//                tagString = tagString + tagList.get(count) + ", ";
+//            }
+            image.setTags(tags);
             Collection<Imagetb> imageColl = user.getImagetbCollection1();
             imageColl.add(image);
             user.setImagetbCollection1(imageColl);
@@ -372,7 +383,9 @@ public class userbean implements userbeanLocal {
         try {
             Query user_query = em.createQuery("SELECT u FROM Usertb u WHERE u.username = :username AND u.password = :password").
                     setParameter("username", username).setParameter("password", password);
-            Usertb user = (Usertb) user_query.getResultList().get(0);
+//            Query user_query = em.createQuery("SELECT u FROM Usertb u WHERE u.username = " + username +" AND u.password = " + password + "").
+//                    setParameter("username", username).setParameter("password", password);
+            Usertb user = (Usertb) user_query.getSingleResult();
             if (user != null) {
                 return user;
             } else {
@@ -382,6 +395,30 @@ public class userbean implements userbeanLocal {
             return null;
         }
     }
+
+    @Override
+    public Integer getMaxImageID() {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            Integer count = (Integer) em.createQuery("SELECT MAX(imageID) FROM Imagetb").getSingleResult();
+            return count;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Collection<Imagetb> getRandomImages() {
+        try {
+            Collection<Imagetb> randomImages = em.createQuery("SELECT img FROM Imagetb img ORDER BY RAND()", Imagetb.class).setMaxResults(100).getResultList();
+            return randomImages;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
+
 }
